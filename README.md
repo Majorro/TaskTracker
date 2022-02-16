@@ -25,16 +25,16 @@ This is an ASP.NET Core Web Api app that provides Rest API for task tracking. Ap
 }
 ```
 2. Install the `dotnet-ef` tool to use migrations for database creation and modification
-   1. Globally:
+   Globally:
    ```bash
    dotnet tool install --global dotnet-ef --version 5.0.14
    ```
-   2. Or locally, in the solution folder:
+   Or locally, in the solution folder:
    ```bash
    dotnet new tool-manifest
    dotnet tool install --global dotnet-ef --version 5.0.14
    ```
-3. Apply migrations to the database, this command also will build the project:
+3. Apply migrations to the database, this command will also build the project:
 ```bash
 dotnet ef database update --project src/TaskTracker/TaskTracker.csproj
 ```
@@ -42,14 +42,14 @@ dotnet ef database update --project src/TaskTracker/TaskTracker.csproj
 ```bash
 cd src/TaskTracker
 ```
-1. Run the app:
+5. Run the app:
 ```bash
 dotnet run --no-build
 ```
 
 ## Usage
 
-When the app is running, http://localhost:5000/swagger/index.html can be opened to explore swagger api documentation and try api methods.
+When the app is running, http://localhost:5000/swagger/index.html can be opened to explore swagger api documentation and to try api methods.
 
 ## License
 
