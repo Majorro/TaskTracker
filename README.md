@@ -24,7 +24,7 @@ This is an ASP.NET Core Web Api app that provides Rest API for task tracking. Ap
     "TaskTrackerDb": "Server=<your_mssql_server_name>;Database=TaskTracker;Trusted_Connection=true"
 }
 ```
-2. Install the `dotnet-ef` tool to use migrations for database creation and modification
+2. Install the `dotnet-ef` tool to use migrations for database creation and modification<br>
    Globally:
    ```bash
    dotnet tool install --global dotnet-ef --version 5.0.14
