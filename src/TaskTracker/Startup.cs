@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 using TaskTracker.Data;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace TaskTracker
 {
@@ -65,7 +66,7 @@ namespace TaskTracker
             Console.WriteLine($"Environment variables:");
             foreach(var variable in Environment.GetEnvironmentVariables())
             {
-                Console.WriteLine(variable);
+                Console.WriteLine($"{((DictionaryEntry)variable).Key} {((DictionaryEntry)variable).Value}");
             }
             if (webHostEnvironment.IsDevelopment())
             {
