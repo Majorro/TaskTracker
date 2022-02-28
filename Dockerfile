@@ -5,6 +5,11 @@ EXPOSE 443
 
 ARG DB_CONNECTION_STRING
 
+# ????
+# ENV ASPNETCORE_ENVIRONMENT Docker
+ENV Logging__Console__FormatterName=Simple
+ENV DB_CONNECTION_STRING=$DB_CONNECTION_STRING
+
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/TaskTracker/TaskTracker.csproj", "TaskTracker/"]
@@ -18,9 +23,6 @@ RUN dotnet publish "TaskTracker.csproj" -c Release -o /app/publish
 COPY "src/TaskTracker/efbundle" /app/publish
 
 FROM base AS final
-# ????
-# ENV ASPNETCORE_ENVIRONMENT Docker
-ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
 COPY --from=publish /app/publish .
 # ENTRYPOINT ["dotnet", "TaskTracker.dll"]
