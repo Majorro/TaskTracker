@@ -25,4 +25,5 @@ COPY --from=publish /app/publish .
 # ENTRYPOINT ["dotnet", "TaskTracker.dll"]
 # for heroku deployment
 CMD ASPNETCORE_URLS=http://*:$PORT dotnet TaskTracker.dll \ 
+    && chmod +x efbundle \
     && ./efbundle

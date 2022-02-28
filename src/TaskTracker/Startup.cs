@@ -6,9 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Linq;
 using System.IO;
 using System.Text.Json.Serialization;
 using TaskTracker.Data;
+using System.Collections.Generic;
 
 namespace TaskTracker
 {
@@ -58,6 +60,13 @@ namespace TaskTracker
         /// <param name="webHostEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment)
         {
+            // 21st century logging
+            Console.WriteLine($"Connection string: {GetConnectionString()}");
+            Console.WriteLine($"Environment variables:");
+            foreach(var variable in Environment.GetEnvironmentVariables())
+            {
+                Console.WriteLine(variable);
+            }
             if (webHostEnvironment.IsDevelopment())
             {
                 applicationBuilder.UseDeveloperExceptionPage();
@@ -67,12 +76,11 @@ namespace TaskTracker
                               .UseRouting()
                               .UseAuthorization()
                               .UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            Console.WriteLine(Configuration["ConnectionStrings:TaskTrackerDb"]);
         }
 
         private string GetConnectionString() =>
             WebHostEnvironment.IsDevelopment() ? 
-            Configuration["ConnectionStrings:TaskTrackerDb"] :
+            Configuration["ConnectionStrings:db"] :
             Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     }
 }
