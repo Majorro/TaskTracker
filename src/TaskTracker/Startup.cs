@@ -16,19 +16,23 @@ namespace TaskTracker
     /// </summary>
     public class Startup
     {
-
         /// <summary>
         /// </summary>
         /// <param name="configuration"></param>
-        public Startup(IConfiguration configuration)
+        /// <param name="webHostEnvironment"></param>
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
+            WebHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
         /// </summary>
         public IConfiguration Configuration { get; }
-        
+        /// <summary>
+        /// </summary>
+        public IWebHostEnvironment WebHostEnvironment { get; }
+
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
@@ -42,7 +46,7 @@ namespace TaskTracker
                         string xmldocPath = Path.Combine(AppContext.BaseDirectory, "TaskTracker.xml");
                         options.IncludeXmlComments(xmldocPath, true);
                     })
-                    .AddDbContext<TaskTrackerContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:TaskTrackerDb"]))
+                    .AddDbContext<TaskTrackerContext>(options => options.UseSqlServer(GetConnectionString()))
                     .AddControllers()
                     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
@@ -63,6 +67,12 @@ namespace TaskTracker
                               .UseRouting()
                               .UseAuthorization()
                               .UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            Console.WriteLine(Configuration["ConnectionStrings:TaskTrackerDb"]);
         }
+
+        private string GetConnectionString() =>
+            WebHostEnvironment.IsDevelopment() ? 
+            Configuration["ConnectionStrings:TaskTrackerDb"] :
+            Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     }
 }

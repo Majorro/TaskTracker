@@ -2,20 +2,21 @@ name: TaskTracker CD
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev ] #while debugging, after change to master
   pull_request:
     branches: [ master ]
     
 #set environment variables 
 env:
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-  APP_NAME: ${{ 'tasktracker228' }}
+  SQLSERVER_CONNECTION_STRING: ${{ secrets.SQLSERVER_CONNECTION_STRING }}
+  APP_NAME: ${{ secrets.APP_NAME }}
 
 jobs:
       
   deploy:
     name: Deploy to Heroku
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
 
     # Clone the repository
@@ -29,5 +30,5 @@ jobs:
     # Push the Docker image to Heroku Container Registry
     - name: Publish
       run: |
-        heroku container:push web -a $APP_NAME
+        heroku container:push web -a $APP_NAME --arg DB_CONNECTION_STRING="${SQLSERVER_CONNECTION_STRING}"
         heroku container:release web -a $APP_NAME

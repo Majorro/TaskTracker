@@ -6,7 +6,9 @@ services:
             - "8080:80"
         depends_on:
             - db
-    TaskTrackerDb:
+        environment:
+            ASPNETCORE_ENVIRONMENT: Development
+    db:
         image: "mcr.microsoft.com/mssql/server"
         environment:
             SA_PASSWORD: "Pass228228"

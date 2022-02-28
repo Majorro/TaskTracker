@@ -263,5 +263,4 @@ FakesAssemblies/
 *.opt
 
 TODO.txt
-*appsettings.Development.json
 **/published/*
