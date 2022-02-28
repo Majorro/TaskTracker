@@ -26,7 +26,7 @@ jobs:
 
     # Push the Docker image to Heroku Container Registry
     - name: Build and push
-      run: heroku container:push web -a $APP_NAME --arg DB_CONNECTION_STRING="${${{ secrets.SQLSERVER_CONNECTION_STRING }}}"
+      run: heroku container:push web -a $APP_NAME --arg DB_CONNECTION_STRING="\$\{${{ secrets.SQLSERVER_CONNECTION_STRING }}\}"
 
     - name: Deploy
       run: heroku container:release web -a $APP_NAME
