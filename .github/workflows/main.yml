@@ -7,8 +7,11 @@ on:
     branches: [ master ]
     
 env:
+  SQLSERVER_HOSTNAME: ${{ secrets.SQLSERVER_HOSTNAME }}
+  SQLSERVER_HOSTPORT: ${{ secrets.SQLSERVER_HOSTPORT }}
+  SQLSERVER_LOGIN: ${{ secrets.SQLSERVER_LOGIN }}
+  SQLSERVER_PASSWORD: ${{ secrets.SQLSERVER_PASSWORD }}
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-  SQLSERVER_CONNECTION_STRING: ${{ secrets.SQLSERVER_CONNECTION_STRING }}
   APP_NAME: ${{ secrets.APP_NAME }}
 
 jobs:
@@ -26,7 +29,7 @@ jobs:
 
     # Push the Docker image to Heroku Container Registry
     - name: Build and push
-      run: heroku container:push web -a $APP_NAME --arg DB_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTION_STRING }}"
+      run: heroku container:push web -a $APP_NAME --arg DB_HOSTNAME="$SQLSERVER_HOSTNAME",DB_HOSTPORT="$SQLSERVER_HOSTPORT",DB_LOGIN="$SQLSERVER_LOGIN",DB_PASSWORD="$SQLSERVER_PASSWORD"
 
     - name: Deploy
       run: heroku container:release web -a $APP_NAME

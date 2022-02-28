@@ -80,8 +80,12 @@ namespace TaskTracker
         }
 
         private string GetConnectionString() =>
-            WebHostEnvironment.IsDevelopment() ? 
-            Configuration["ConnectionStrings:db"] :
-            Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            WebHostEnvironment.IsDevelopment() ?
+            Configuration["ConnectionStrings:TaskTrackerDb"] :
+            string.Format(Configuration["ConnectionStrings:TaskTrackerDb"],
+                          Environment.GetEnvironmentVariable("DB_HOSTNAME"),
+                          Environment.GetEnvironmentVariable("DB_HOSTPORT"),
+                          Environment.GetEnvironmentVariable("DB_LOGIN"),
+                          Environment.GetEnvironmentVariable("DB_PASSWORD"));
     }
 }
