@@ -19,5 +19,7 @@ ENV ASPNETCORE_ENVIRONMENT Docker
 ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TaskTracker.dll"]
-CMD ./efbundle
+# ENTRYPOINT ["dotnet", "TaskTracker.dll"]
+# for heroku deployment
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet TaskTracker.dll \ 
+    && ./efbundle

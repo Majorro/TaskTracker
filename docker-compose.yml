@@ -9,5 +9,5 @@ services:
     TaskTrackerDb:
         image: "mcr.microsoft.com/mssql/server"
         environment:
-            SA_PASSWORD: ""
+            SA_PASSWORD: "Pass228228"
             ACCEPT_EULA: "Y"
