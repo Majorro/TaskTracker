@@ -61,13 +61,6 @@ namespace TaskTracker
         /// <param name="webHostEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment)
         {
-            // 21st century logging
-            Console.WriteLine($"Connection string: {GetConnectionString()}");
-            Console.WriteLine($"Environment variables:");
-            foreach(var variable in Environment.GetEnvironmentVariables())
-            {
-                Console.WriteLine($"{((DictionaryEntry)variable).Key} {((DictionaryEntry)variable).Value}");
-            }
             if (webHostEnvironment.IsDevelopment())
             {
                 applicationBuilder.UseDeveloperExceptionPage();

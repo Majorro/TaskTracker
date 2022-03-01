@@ -8,13 +8,11 @@ ARG DB_HOSTPORT
 ARG DB_LOGIN
 ARG DB_PASSWORD
 
-# ????
-# ENV ASPNETCORE_ENVIRONMENT Docker
-ENV Logging__Console__FormatterName=Simple
 ENV DB_HOSTNAME=$DB_HOSTNAME
 ENV DB_HOSTPORT=$DB_HOSTPORT
 ENV DB_LOGIN=$DB_LOGIN
 ENV DB_PASSWORD=$DB_PASSWORD
+ENV Logging__Console__FormatterName=Simple
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
