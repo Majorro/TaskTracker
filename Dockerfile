@@ -24,13 +24,14 @@ RUN dotnet build "TaskTracker.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "TaskTracker.csproj" -c Release -o /app/publish
-COPY "src/TaskTracker/efbundle" /app/publish
+# COPY "src/TaskTracker/efbundle" /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 # ENTRYPOINT ["dotnet", "TaskTracker.dll"]
 # for heroku deployment
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet TaskTracker.dll \ 
-    && chmod +x efbundle \
-    && ./efbundle
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet TaskTracker.dll
+# CMD ASPNETCORE_URLS=http://*:$PORT dotnet TaskTracker.dll \ 
+#    && chmod +x efbundle \
+#    && ./efbundle

@@ -2,7 +2,7 @@ name: TaskTracker CD
 
 on:
   push:
-    branches: [ dev ] #while debugging, after change to master
+    branches: [ dev ]
   pull_request:
     branches: [ master ]
     
