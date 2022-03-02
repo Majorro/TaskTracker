@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.0
+        with:
+            fetch-depth: '0'
 
       - name: SonarScanner for .NET 6 with pull request decoration support
         uses: highbyte/sonarscan-dotnet@v2.1.2
