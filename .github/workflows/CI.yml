@@ -1,0 +1,77 @@
+name: TaskTracker CI
+
+on:
+  push:
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+jobs:
+  codecheck:
+    name: Do codechecks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: SonarScanner for .NET 6 with pull request decoration support
+        uses: highbyte/sonarscan-dotnet@v2.1.2
+        with:
+          # The key of the SonarQube project
+          sonarProjectKey: Majorro_TaskTracker
+          # The name of the SonarQube project
+          sonarProjectName:  TaskTracker
+          # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+          sonarOrganization: majorro
+          # Optional command arguments to dotnet test
+          dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          # Optional extra command arguments the the SonarScanner 'begin' command
+          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+
+      - name: Run Infer#      
+        uses: microsoft/infersharpaction@v1.2.1
+        id: runinfersharp
+        with:
+          binary-path: "src/TaskTracker/bin"
+
+      - name: Upload SARIF output to GitHub Security Center
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: infer-out/report.sarif
+
+      - name: Infer# analysis results
+        run: echo "${{ steps.runinfersharp.outputs.results }}"
+        
+  
+  build-and-test: # probably remove
+    name: Build and test dotnet
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2.0.0
+        with:
+          dotnet-version: "6.x.x"
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults"
+
+      # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: dotnet-test-results
+          path: TestResults
+        if: ${{ always() }}
+    

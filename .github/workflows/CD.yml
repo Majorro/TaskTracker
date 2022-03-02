@@ -1,10 +1,11 @@
 name: TaskTracker CD
 
+
 on:
-  push:
-    branches: [ dev ]
   pull_request:
     branches: [ master ]
+    types: [ closed ]
+    
     
 env:
   SQLSERVER_HOSTNAME: ${{ secrets.SQLSERVER_HOSTNAME }}
@@ -15,16 +16,17 @@ env:
   APP_NAME: ${{ secrets.APP_NAME }}
 
 jobs:
-      
+
   deploy:
     name: Deploy to Heroku
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3.0.0
 
-    - name: Docker login
+    - name: Container registry login
       run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
 
     # Push the Docker image to Heroku Container Registry
