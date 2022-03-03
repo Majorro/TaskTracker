@@ -36,6 +36,7 @@ jobs:
           sonarProjectKey: Majorro_TaskTracker
           sonarProjectName:  TaskTracker
           sonarOrganization: majorro
+          dotnetBuildArguments: /p:UseSharedCompilation=false
           dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
@@ -73,13 +74,16 @@ jobs:
             docker compose build
             docker compose up -d
 
+      - name: check
+        run: curl http://localhost:8000/api/v1/tasks
+
       - name: Mayhem for API
         uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
         continue-on-error: true
         with:
           mapi-token: ${{ secrets.MAPI_TOKEN }}
-          api-url: http://localhost:8080
-          api-spec: http://localhost:8080/swagger/v1/swagger.json
+          api-url: http://localhost:8000
+          api-spec: http://localhost:8000/swagger/v1/swagger.json
           duration: 60
           sarif-report: mapi.sarif
           html-report: mapi.html
