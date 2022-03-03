@@ -24,32 +24,32 @@ jobs:
         with:
             fetch-depth: '0'
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-            languages: csharp
+      #- name: Initialize CodeQL
+      #  uses: github/codeql-action/init@v1
+      #  with:
+      #      languages: csharp
 
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v2.0.0
-        with:
-          dotnet-version: "6.x.x"
+      #- name: Setup .NET Core SDK
+      #  uses: actions/setup-dotnet@v2.0.0
+      #  with:
+      #    dotnet-version: "6.x.x"
 
-      - name: Install dependencies
-        run: dotnet restore
+      #- name: Install dependencies
+      #  run: dotnet restore
 
-      - name: Build
-        run: dotnet build /p:UseSharedCompilation=false
+      #- name: Build
+      #  run: dotnet build /p:UseSharedCompilation=false
       
       # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
-      #- name: SonarScanner for .NET 6 with pull request decoration support
-      #  uses: highbyte/sonarscan-dotnet@v2.1.2
-      #  with:
-      #    sonarProjectKey: Majorro_TaskTracker
-      #    sonarProjectName:  TaskTracker
-      #    sonarOrganization: majorro
-      #    dotnetBuildArguments: /p:UseSharedCompilation=false
-      #    dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-      #    sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+      - name: SonarScanner for .NET 6 with pull request decoration support
+        uses: highbyte/sonarscan-dotnet@v2.1.2
+        with:
+          sonarProjectKey: Majorro_TaskTracker
+          sonarProjectName:  TaskTracker
+          sonarOrganization: majorro
+          dotnetBuildArguments: /p:UseSharedCompilation=false
+          dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
       - name: Run Infer#      
         uses: microsoft/infersharpaction@v1.2.1
@@ -80,10 +80,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Start API
-        run: |
-            docker compose build
-            docker compose up &
+      - name: Build docker
+        run: docker compose build
+      - name: Start docker
+        run: docker compose up &
 
       - name: check
         run: curl http://localhost:8080/api/v1/tasks
