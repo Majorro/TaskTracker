@@ -1,35 +1,41 @@
-name: TaskTracker CI
+﻿name: TaskTracker CI
 
 on:
   push:
+  #pull_request:
+  #  branches: [ master ]
 
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
 jobs:
-  codecheck:
-    name: Do codechecks
+  code-checks:
+    name: Code checks
     runs-on: ubuntu-latest
+    #permissions:
+    #  actions: read
+    #  contents: read
+    #  security-events: write
+    strategy:
+      fail-fast: false # remove after debugging
+      matrix:
+        language: [ 'csharp' ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v3
         with:
             fetch-depth: '0'
-
+      
+      # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
       - name: SonarScanner for .NET 6 with pull request decoration support
         uses: highbyte/sonarscan-dotnet@v2.1.2
         with:
-          # The key of the SonarQube project
           sonarProjectKey: Majorro_TaskTracker
-          # The name of the SonarQube project
           sonarProjectName:  TaskTracker
-          # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
           sonarOrganization: majorro
-          # Optional command arguments to dotnet test
           dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          # Optional extra command arguments the the SonarScanner 'begin' command
           sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
       - name: Run Infer#      
@@ -38,42 +44,52 @@ jobs:
         with:
           binary-path: "src/TaskTracker/bin"
 
+      - name: Infer# analysis results
+        run: echo "${{ steps.runinfersharp.outputs.results }}"
+
       - name: Upload SARIF output to GitHub Security Center
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: infer-out/report.sarif
 
-      - name: Infer# analysis results
-        run: echo "${{ steps.runinfersharp.outputs.results }}"
-        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+            languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+      
   
-  build-and-test: # probably remove
-    name: Build and test dotnet
+  api-checks:
+    name: API security checks
     runs-on: ubuntu-latest
+    #permissions:
+    #  actions: read
+    #  contents: read
+    #  security-events: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.0
+      - uses: actions/checkout@v2
 
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v2.0.0
+      - name: Start API
+        run: |
+            docker compose build
+            docker compose up -d
+
+      - name: Mayhem for API
+        uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
+        continue-on-error: true
         with:
-          dotnet-version: "6.x.x"
+          mapi-token: ${{ secrets.MAPI_TOKEN }}
+          api-url: http://localhost:8080/api/v1/
+          api-spec: http://localhost:8080/swagger/v1/swagger.json
+          duration: 60
+          sarif-report: mapi.sarif
 
-      - name: Install dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults"
-
-      # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
-      - name: Upload dotnet test results
-        uses: actions/upload-artifact@v2.3.1
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          name: dotnet-test-results
-          path: TestResults
-        if: ${{ always() }}
-    
+          sarif_file: mapi.sarif
