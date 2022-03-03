@@ -60,8 +60,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
-      
-  
   api-checks:
     name: API security checks
     runs-on: ubuntu-latest
@@ -72,7 +70,7 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Start API
         run: |
