@@ -10,36 +10,15 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
 jobs:
-  code-checks: # TODO: separate sonar scanner from others
+  code-checks:
     name: Code checks
     runs-on: ubuntu-latest
-    #permissions:
-    #  actions: read
-    #  contents: read
-    #  security-events: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
             fetch-depth: '0'
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-            languages: csharp
-
-      #- name: Setup .NET Core SDK
-      #  uses: actions/setup-dotnet@v2.0.0
-      #  with:
-      #    dotnet-version: "6.x.x"
-
-      #- name: Install dependencies
-      #  run: dotnet restore
-
-      #- name: Build
-      #  run: dotnet build /p:UseSharedCompilation=false
-      
       # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
       - name: SonarScanner for .NET 6 with pull request decoration support
         uses: highbyte/sonarscan-dotnet@v2.1.2
@@ -50,6 +29,34 @@ jobs:
           dotnetBuildArguments: /p:UseSharedCompilation=false
           dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+
+  code-secchecks:
+    name: Code security checks
+    runs-on: ubuntu-latest
+    #permissions:
+    #  actions: read
+    #  contents: read
+    #  security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+            languages: csharp
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2.0.0
+        with:
+          dotnet-version: "6.x.x"
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore /p:UseSharedCompilation=false
 
       - name: Run Infer#      
         uses: microsoft/infersharpaction@v1.2.1
@@ -68,7 +75,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
-  api-checks:
+  api-secchecks:
     name: API security checks
     runs-on: ubuntu-latest
     #permissions:
@@ -85,7 +92,10 @@ jobs:
       - name: Start docker
         run: docker compose up -d
 
-      - name: check
+      - name: Check running containers
+        run: docker ps -a
+
+      - name: check request
         run: curl http://localhost:8080/api/v1/tasks
 
       - name: Mayhem for API
