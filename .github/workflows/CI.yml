@@ -26,7 +26,6 @@ jobs:
           sonarProjectKey: Majorro_TaskTracker
           sonarProjectName:  TaskTracker
           sonarOrganization: majorro
-          dotnetBuildArguments: /p:UseSharedCompilation=false
           dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
@@ -91,12 +90,23 @@ jobs:
         run: docker compose build
       - name: Start docker
         run: docker compose up -d
+      
+      - name: Sleep
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
 
       - name: Check running containers
         run: docker ps -a
 
+      - name: Check logs
+        run: docker logs web
+
       - name: check request
         run: curl http://localhost:8080/api/v1/tasks
+
+      - name: Check logs
+        run: docker logs web
 
       - name: Mayhem for API
         uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
