@@ -13,6 +13,8 @@ jobs:
   code-checks:
     name: Code checks
     runs-on: ubuntu-latest
+
+    if: ${{ false }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,6 +39,7 @@ jobs:
     #  contents: read
     #  security-events: write
 
+    if: ${{ false }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -100,13 +103,13 @@ jobs:
         run: docker ps -a
 
       - name: Check logs
-        run: docker logs web
+        run: docker logs tasktracker-web-1
 
       - name: check request
         run: curl http://localhost:8080/api/v1/tasks
 
       - name: Check logs
-        run: docker logs web
+        run: docker logs tasktracker-web-1
 
       - name: Mayhem for API
         uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
