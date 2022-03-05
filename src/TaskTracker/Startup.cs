@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using TaskTracker.Data;
 using System.Collections.Generic;
 using System.Collections;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace TaskTracker
 {
@@ -44,7 +45,11 @@ namespace TaskTracker
         {
             services.AddSwaggerGen(options =>
                     {
-                        options.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskTracker", Version = "v1" });
+                        options.SwaggerDoc("v1", new OpenApiInfo 
+                        { 
+                            Title = "TaskTracker API", 
+                            Version = "v1" 
+                        });
 
                         string xmldocPath = Path.Combine(AppContext.BaseDirectory, "TaskTracker.xml");
                         options.IncludeXmlComments(xmldocPath, true);
@@ -61,15 +66,24 @@ namespace TaskTracker
         /// <param name="webHostEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment)
         {
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+
             if (webHostEnvironment.IsDevelopment())
             {
                 applicationBuilder.UseDeveloperExceptionPage();
             }
+
             applicationBuilder.UseSwagger()
-                              .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskTracker v1"))
+                              .UseSwaggerUI(c =>
+                              {
+                                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskTracker v1");
+                                  c.DocumentTitle = "TaskTracker API";
+                              })
                               .UseRouting()
                               .UseAuthorization()
-                              .UseEndpoints(endpoints => { endpoints.MapControllers(); });
+                              .UseEndpoints(endpoints => { endpoints.MapControllers(); })
+                              .UseRewriter(option);
         }
 
         private string GetConnectionString() =>
