@@ -23,11 +23,7 @@ namespace TaskTracker.Data
         /// <param name="options"></param>
         public TaskTrackerContext(DbContextOptions<TaskTrackerContext> options)
             : base(options)
-        {
-#if DEBUG
-            //Database.Migrate(); // UNDONE: does not work
-#endif
-        }
+        {}
 
         /// <summary>
         /// Checks whether a project with the given id exists in database or not.

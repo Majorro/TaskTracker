@@ -8,6 +8,9 @@ using TaskTracker.Models;
 
 namespace TaskTrackerTests
 {
+    /// <summary>
+    /// Dummy tests lol
+    /// </summary>
     [TestFixture]
     public class ProjectModelTests
     {

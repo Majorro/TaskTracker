@@ -13,6 +13,7 @@ namespace TaskTracker.Controllers
     /// <summary>
     /// Provides methods to work with <see cref="TaskModel">tasks</see>.
     /// </summary>
+    [Produces("application/json")]
     [Route("api/v1/tasks")]
     [ApiController]
     public class TaskController : ControllerBase

@@ -13,6 +13,7 @@ namespace TaskTracker.Controllers
     /// <summary>
     /// Provides methods to work with <see cref="ProjectModel">projects</see>.
     /// </summary>
+    [Produces("application/json")]
     [Route("api/v1/projects")]
     [ApiController]
     public class ProjectController : ControllerBase

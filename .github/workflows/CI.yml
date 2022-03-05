@@ -1,0 +1,115 @@
+﻿name: TaskTracker CI
+
+on:
+  push:
+  #pull_request:
+  #  branches: [ master ]
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+jobs:
+  code-checks:
+    name: Code checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: '0'
+
+      # TODO: maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
+      - name: SonarScanner for .NET 6 with pull request decoration support # TODO: fix coverage
+        uses: highbyte/sonarscan-dotnet@v2.1.2
+        with:
+          sonarProjectKey: Majorro_TaskTracker
+          sonarProjectName:  TaskTracker
+          sonarOrganization: majorro
+          dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+
+  code-secchecks:
+    name: Code security checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+            languages: csharp
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2.0.0
+        with:
+          dotnet-version: "6.x.x"
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore /p:UseSharedCompilation=false
+
+      - name: Run Infer#      
+        uses: microsoft/infersharpaction@v1.2.1
+        id: runinfersharp
+        with:
+          binary-path: "src/TaskTracker/bin"
+
+      - name: Infer# analysis results
+        run: echo "${{ steps.runinfersharp.outputs.results }}"
+
+      - name: Upload SARIF output to GitHub Security Center
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: infer-out/report.sarif
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+  api-secchecks:
+    name: API security checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build docker
+        run: docker compose build
+      - name: Start docker
+        run: docker compose up -d
+      
+      - name: Sleep(mmm kostyl\') # TODO: fix somehow
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '10s'
+
+      - name: check request
+        run: curl http://localhost:8080/api/v1/tasks
+
+      - name: Mayhem for API
+        uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
+        continue-on-error: true
+        with:
+          mapi-token: ${{ secrets.MAPI_TOKEN }}
+          api-url: http://localhost:8080
+          api-spec: http://localhost:8080/swagger/v1/swagger.json
+          duration: 60
+          sarif-report: mapi.sarif
+          html-report: mapi.html
+
+      - name: Archive Mayhem for API html report
+        uses: actions/upload-artifact@v2
+        with:
+          name: mapi-report
+          path: mapi.html
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: mapi.sarif
