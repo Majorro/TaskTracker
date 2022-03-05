@@ -14,15 +14,14 @@ jobs:
     name: Code checks
     runs-on: ubuntu-latest
 
-    if: ${{ false }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
             fetch-depth: '0'
 
-      # maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
-      - name: SonarScanner for .NET 6 with pull request decoration support
+      # TODO: maybe try https://github.com/marketplace/actions/publish-unit-test-results or https://github.com/marketplace/actions/test-reporter
+      - name: SonarScanner for .NET 6 with pull request decoration support # TODO: fix coverage
         uses: highbyte/sonarscan-dotnet@v2.1.2
         with:
           sonarProjectKey: Majorro_TaskTracker
@@ -34,12 +33,7 @@ jobs:
   code-secchecks:
     name: Code security checks
     runs-on: ubuntu-latest
-    #permissions:
-    #  actions: read
-    #  contents: read
-    #  security-events: write
 
-    if: ${{ false }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -80,10 +74,6 @@ jobs:
   api-secchecks:
     name: API security checks
     runs-on: ubuntu-latest
-    #permissions:
-    #  actions: read
-    #  contents: read
-    #  security-events: write
 
     steps:
       - name: Checkout
@@ -94,22 +84,13 @@ jobs:
       - name: Start docker
         run: docker compose up -d
       
-      - name: Sleep
+      - name: Sleep(mmm kostyl\') # TODO: fix somehow
         uses: jakejarvis/wait-action@master
         with:
-          time: '60s'
-
-      - name: Check running containers
-        run: docker ps -a
-
-      - name: Check logs
-        run: docker logs tasktracker-web-1
+          time: '10s'
 
       - name: check request
         run: curl http://localhost:8080/api/v1/tasks
-
-      - name: Check logs
-        run: docker logs tasktracker-web-1
 
       - name: Mayhem for API
         uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010

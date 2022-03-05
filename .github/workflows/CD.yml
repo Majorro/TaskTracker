@@ -29,7 +29,6 @@ jobs:
     - name: Container registry login
       run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
 
-    # Push the Docker image to Heroku Container Registry
     - name: Build and push
       run: heroku container:push web -a $APP_NAME --arg DB_HOSTNAME="$SQLSERVER_HOSTNAME",DB_HOSTPORT="$SQLSERVER_HOSTPORT",DB_LOGIN="$SQLSERVER_LOGIN",DB_PASSWORD="$SQLSERVER_PASSWORD"
 
