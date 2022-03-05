@@ -1,55 +1,45 @@
 # Task Tracker
 
+![GitHub branch checks state](https://img.shields.io/github/checks-status/majorro/TaskTracker/master?label=branchchecks)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/majorro/TaskTracker/TaskTracker%20CI?label=codechecks)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
+[![Mayhem for API](https://mayhem4api.forallsecure.com/api/v1/api-target/majorro/majorro-tasktracker/badge/icon.svg?scm_branch=master)](https://mayhem4api.forallsecure.com/majorro/majorro-tasktracker/latest-job?scm_branch=master)
+
+
 This is an ASP.NET Core Web Api app that provides Rest API for task tracking. Api documentation generates using Swagger, more info can be found in [Usage](#usage).
 
 ## Technologies used
 
-1. .NET 5
-2. C# 9
-3. ASP.NET Core 5 Web Api
-4. Entity Framework Core 5 with Code-First approach
+1. .NET 6
+2. C# 10
+3. ASP.NET Core 6 Web Api
+4. Entity Framework Core 6 with Code-First approach
 5. Swagger 3
 
 ## Prerequisites
 
-<!-- 1. [IIS](https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-10-version-1709/new-features-introduced-in-iis-10-1709) or [IIS Express](https://docs.microsoft.com/en-us/iis/extensions/introduction-to-iis-express/iis-express-overview) -->
-1. [MSSQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
-2. [.NET 5 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/5.0)
+1. [Docker](https://docs.docker.com/get-docker/) to build and run the app locally.
 
 ## Building and running
 
-1. Add MSSQL server name and credentials if needed to the database connection string in [appsettings.json](/src/TaskTracker/appsettings.json):
-```json
-"ConnectionStrings": {
-    "TaskTrackerDb": "Server=<your_mssql_server_name>;Database=TaskTracker;Trusted_Connection=true"
-}
-```
-2. Install the `dotnet-ef` tool to use migrations for database creation and modification<br>
-    Globally:
-   ```bash
-   dotnet tool install --global dotnet-ef --version 5.0.14
-   ```
-    Or locally, in the solution folder:
-   ```bash
-   dotnet new tool-manifest
-   dotnet tool install --global dotnet-ef --version 5.0.14
-   ```
-3. Apply migrations to the database, this command also will build the project:
+1. Simply run the following command from the root of the repository. You can also add `-d` key to run it in the background:
 ```bash
-dotnet ef database update --project src/TaskTracker/TaskTracker.csproj
-```
-4. Relocate to [/src/TaskTracker](/src/TaskTracker):
-```bash
-cd src/TaskTracker
-```
-1. Run the app:
-```bash
-dotnet run --no-build
+docker compose up --build
 ```
 
 ## Usage
 
-When the app is running, http://localhost:5000/swagger/index.html can be opened to explore swagger api documentation and try api methods.
+When the app is running, http://localhost:8080/ can be opened to explore swagger api documentation and try api methods.
 
 ## License
 
