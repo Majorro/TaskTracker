@@ -37,7 +37,7 @@ namespace TaskTrackerTests
         {
             TaskModel? task = null;
 
-            Assert.Throws<NullReferenceException>(() => _project!.AddTask(task));
+            Assert.Throws<ArgumentNullException>(() => _project!.AddTask(task));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TaskTrackerTests
         {
             TaskModel? task = null;
 
-            Assert.Throws<NullReferenceException>(() => _project!.RemoveTask(task));
+            Assert.Throws<ArgumentNullException>(() => _project!.RemoveTask(task));
         }
     }
 }

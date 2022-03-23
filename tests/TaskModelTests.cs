@@ -37,7 +37,7 @@ namespace TaskTrackerTests
         {
             ProjectModel? project = null;
 
-            Assert.Throws<NullReferenceException>(() => _task!.AttachToProject(project?.Id));
+            Assert.Throws<ArgumentNullException>(() => _task!.AttachToProject(project?.Id));
         }
 
         /// <summary>
