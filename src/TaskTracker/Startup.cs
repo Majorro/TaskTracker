@@ -54,7 +54,7 @@ namespace TaskTracker
                         string xmldocPath = Path.Combine(AppContext.BaseDirectory, "TaskTracker.xml");
                         options.IncludeXmlComments(xmldocPath, true);
                     })
-                    .AddDbContext<TaskTrackerContext>(options => options.UseSqlServer(GetConnectionString()))
+                    .AddDbContext<TaskTrackerContext>(options => options.UseNpgsql(GetConnectionString()))
                     .AddControllers()
                     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
@@ -89,10 +89,17 @@ namespace TaskTracker
         private string GetConnectionString() =>
             WebHostEnvironment.IsDevelopment() ?
             Configuration["ConnectionStrings:TaskTrackerDb"] :
-            string.Format(Configuration["ConnectionStrings:TaskTrackerDb"],
-                          Environment.GetEnvironmentVariable("DB_HOSTNAME"),
-                          Environment.GetEnvironmentVariable("DB_HOSTPORT"),
-                          Environment.GetEnvironmentVariable("DB_LOGIN"),
-                          Environment.GetEnvironmentVariable("DB_PASSWORD"));
+            ParsePostgresConnectionString(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING"));
+
+        private string ParsePostgresConnectionString(string connectionString)
+        {
+            var databaseUri = new Uri(connectionString);
+
+            string db = databaseUri.LocalPath.TrimStart('/');
+            string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+            return string.Format(Configuration["ConnectionStrings:TaskTrackerDb"],
+                                 userInfo[0], userInfo[1], databaseUri.Host, databaseUri.Port, db);
+        }
     }
 }

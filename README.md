@@ -1,6 +1,5 @@
 # Task Tracker
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/majorro/TaskTracker/master?label=branchchecks)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/majorro/TaskTracker/TaskTracker%20CI?label=codechecks)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Majorro_TaskTracker&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Majorro_TaskTracker)
@@ -24,7 +23,9 @@ This is an ASP.NET Core Web Api app that provides Rest API for task tracking. Ap
 2. C# 10
 3. ASP.NET Core 6 Web Api
 4. Entity Framework Core 6 with Code-First approach
-5. Swagger 3
+5. PosgreSQL
+6. Swagger 3
+7. Docker
 
 ## Prerequisites
 
@@ -39,28 +40,8 @@ docker compose up --build
 
 ## Usage
 
-When the app is running, http://localhost:8080/ can be opened to explore swagger api documentation and try api methods.
+When the app is running, http://localhost:8080/ can be opened to explore swagger api documentation and try the api methods.
 
 ## License
 
-MIT License
-
-Copyright (c) 2022 Andrey Plekhov
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[MIT](LICENSE)

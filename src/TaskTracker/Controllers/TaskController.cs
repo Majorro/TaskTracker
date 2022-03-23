@@ -41,7 +41,7 @@ namespace TaskTracker.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TaskModel>> GetTask(Guid id)
         {
-            TaskModel task = await _context.Tasks.FindAsync(id);
+            TaskModel? task = await _context.Tasks.FindAsync(id);
 
             if (task is null)
                 return NotFound($"There is no task with {{id}} = {id}.");
@@ -82,7 +82,7 @@ namespace TaskTracker.Controllers
             }
             catch (DbUpdateException e)
             {
-                if (await _context.IsTaskExists(task.Id))
+                if (await _context.IsTaskExistsAsync(task.Id))
                     return BadRequest($"There is already exists task with {{id}} = {task.Id}");
                 else
                     throw;
@@ -112,7 +112,7 @@ namespace TaskTracker.Controllers
             if (id != task.Id)
                 return BadRequest("{id} from the route is not equal to {id} from passed object.");
 
-            if (!await _context.IsTaskExists(id))
+            if (!await _context.IsTaskExistsAsync(id))
                 return NotFound($"There is no task with {{id}} = {id}.");
 
             _context.Entry(task).State = EntityState.Modified;
@@ -137,7 +137,7 @@ namespace TaskTracker.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteTask(Guid id)
         {
-            TaskModel task = await _context.Tasks.FindAsync(id);
+            TaskModel? task = await _context.Tasks.FindAsync(id);
 
             if (task is null)
                 return NotFound($"There is no task with {{id}} = {id}.");
@@ -163,7 +163,7 @@ namespace TaskTracker.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ProjectModel>> GetProject(Guid id)
         {
-            TaskModel task = await _context.Tasks.Include(task => task.Project)
+            TaskModel? task = await _context.Tasks.Include(task => task.Project)
                                                  .Where(task => task.Id == id)
                                                  .FirstOrDefaultAsync();
 
@@ -190,12 +190,12 @@ namespace TaskTracker.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AttachToProject(Guid id, Guid projectId)
         {
-            TaskModel task = await _context.Tasks.FindAsync(id);
+            TaskModel? task = await _context.Tasks.FindAsync(id);
 
             if(task is null)
                 return NotFound($"There is no task with {{id}} = {id}.");
 
-            if(!await _context.IsProjectExists(projectId))
+            if(!await _context.IsProjectExistsAsync(projectId))
                 return NotFound($"There is no task with {{id}} = {projectId}.");
 
             task.AttachToProject(projectId!);
@@ -222,7 +222,7 @@ namespace TaskTracker.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DetachFromProject(Guid id)
         {
-            TaskModel task = await _context.Tasks.FindAsync(id);
+            TaskModel? task = await _context.Tasks.FindAsync(id);
 
             if (task is null)
                 return NotFound($"There is no task with {{id}} = {id}.");

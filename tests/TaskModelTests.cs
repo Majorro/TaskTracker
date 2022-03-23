@@ -14,7 +14,7 @@ namespace TaskTrackerTests
     [TestFixture]
     public class TaskModelTests
     {
-        private TaskModel _task;
+        private TaskModel? _task;
 
         [SetUp]
         public void Setup()
@@ -27,7 +27,7 @@ namespace TaskTrackerTests
         {
             ProjectModel project = new() { Id = Guid.NewGuid() };
 
-            _task.AttachToProject(project.Id);
+            _task!.AttachToProject(project.Id);
 
             Assert.IsTrue(_task.IsInProject(project.Id));
         }
@@ -35,9 +35,9 @@ namespace TaskTrackerTests
         [Test, Order(0)]
         public void TestAttachToProjectPassedNull()
         {
-            ProjectModel project = null;
+            ProjectModel? project = null;
 
-            Assert.Throws<NullReferenceException>(() => _task.AttachToProject(project?.Id));
+            Assert.Throws<NullReferenceException>(() => _task!.AttachToProject(project?.Id));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TaskTrackerTests
         {
             ProjectModel project = new() { Id = Guid.NewGuid() };
 
-            _task.AttachToProject(project.Id);
+            _task!.AttachToProject(project.Id);
 
             Assert.IsTrue(_task.DetachFromProject());
             Assert.IsFalse(_task.IsInProject());

@@ -10,17 +10,14 @@ namespace TaskTracker.Data
     /// </summary>
     public class TaskTrackerContext : DbContext
     {
-        /// <summary>
-        /// </summary>
-        public DbSet<ProjectModel> Projects { get; private set; }
-        /// <summary>
-        /// </summary>
-        public DbSet<TaskModel> Tasks { get; private set; }
+        public DbSet<ProjectModel> Projects { get; init; } = null!;
+        public DbSet<TaskModel> Tasks { get; init; } = null!;
 
         /// <summary>
-        /// ctor
+        /// Initializes a new instance of the <see cref="TaskTrackerContext"/> class
+        /// using the specified options.
         /// </summary>
-        /// <param name="options"></param>
+        /// <param name="options"><inheritdoc cref="DbContext(DbContextOptions)" path="/param[@name='options']"/></param>
         public TaskTrackerContext(DbContextOptions<TaskTrackerContext> options)
             : base(options)
         {}
@@ -29,16 +26,18 @@ namespace TaskTracker.Data
         /// Checks whether a project with the given id exists in database or not.
         /// </summary>
         /// <param name="id">Unique identifier of a project.</param>
-        /// <returns>True, if a project with the given id exists, otherwise false.</returns>
-        public async Task<bool> IsProjectExists(Guid id) =>
+        /// <returns>A <see cref="Task{TResult}"/> that result containing
+        /// true, if a project with the given id exists in the database, otherwise false.</returns>
+        public async Task<bool> IsProjectExistsAsync(Guid id) =>
             await Projects.AnyAsync(project => project.Id == id);
 
         /// <summary>
         /// Checks whether a task with the given id exists in database or not.
         /// </summary>
         /// <param name="id">Unique identifier of a task.</param>
-        /// <returns>True, if a task with the given id exists, otherwise false.</returns>
-        public async Task<bool> IsTaskExists(Guid id) =>
+        /// <returns>A <see cref="Task{TResult}"/> that result containing
+        /// true, if a task with the given id exists in the database, otherwise false.</returns>
+        public async Task<bool> IsTaskExistsAsync(Guid id) =>
             await Tasks.AnyAsync(task => task.Id == id);
     }
 }

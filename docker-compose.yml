@@ -1,15 +1,35 @@
 ﻿version: "3.9"
 services:
+    db:
+        image: postgres:latest
+        environment:
+            - POSTGRES_PASSWORD=postgres # TODO: unhardcode (maybe add .env)
+        ports:
+            - "5432:5432"
+        restart: always
+        volumes:
+            - database-data:/var/lib/postgresql/data/
     web:
-        build: .
+        build: src/TaskTracker/
         ports:
             - "8080:80"
         depends_on:
             - db
         environment:
             ASPNETCORE_ENVIRONMENT: Development
-    db:
-        image: "mcr.microsoft.com/mssql/server"
+    pgadmin:
+        image: dpage/pgadmin4
         environment:
-            SA_PASSWORD: "Pass228228"
-            ACCEPT_EULA: "Y"
+            - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+            - PGADMIN_DEFAULT_PASSWORD=postgres
+        ports:
+            - "5050:80"
+        depends_on:
+            - db
+        restart: always
+        volumes:
+            - pgadmin:/root/.pgadmin
+
+volumes:
+    database-data:
+    pgadmin:

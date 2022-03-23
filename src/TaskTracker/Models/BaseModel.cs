@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace TaskTracker.Models
 {
     public class BaseModel
     {
+        [Key]
         public Guid Id { get; init; }
     }
 }

@@ -2,16 +2,13 @@ name: TaskTracker CD
 
 
 on:
-  pull_request:
-    branches: [ master ]
-    types: [ closed ]
+  push:
+    tags:
+      - '*'
     
     
 env:
-  SQLSERVER_HOSTNAME: ${{ secrets.SQLSERVER_HOSTNAME }}
-  SQLSERVER_HOSTPORT: ${{ secrets.SQLSERVER_HOSTPORT }}
-  SQLSERVER_LOGIN: ${{ secrets.SQLSERVER_LOGIN }}
-  SQLSERVER_PASSWORD: ${{ secrets.SQLSERVER_PASSWORD }}
+  POSTGRES_CONNECTION_STRING: ${{ secrets.POSTGRES_CONNECTION_STRING }}
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
   APP_NAME: ${{ secrets.APP_NAME }}
 
@@ -20,7 +17,6 @@ jobs:
   deploy:
     name: Deploy to Heroku
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
 
     - name: Checkout
@@ -30,7 +26,7 @@ jobs:
       run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
 
     - name: Build and push
-      run: heroku container:push web -a $APP_NAME --arg DB_HOSTNAME="$SQLSERVER_HOSTNAME",DB_HOSTPORT="$SQLSERVER_HOSTPORT",DB_LOGIN="$SQLSERVER_LOGIN",DB_PASSWORD="$SQLSERVER_PASSWORD"
+      run: heroku container:push web -a $APP_NAME --arg POSTGRES_CONNECTION_STRING="$POSTGRES_CONNECTION_STRING"
 
     - name: Deploy
       run: heroku container:release web -a $APP_NAME

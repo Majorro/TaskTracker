@@ -12,23 +12,23 @@ namespace TaskTracker.Models
     {
         public string Name { get; init; } = "";
         public string Description { get; init; } = "";
-        public TaskStatus Status { get; init; }
-        public int Priority { get; init; }
+        public TaskStatus Status { get; init; } = TaskStatus.ToDo;
+        public Priority Priority { get; init; } = Priority.Low;
 
         [ForeignKey("Project")]
         public Guid? ProjectId { get; private set; } = null;
         [JsonIgnore]
-        public ProjectModel Project { get; private set; } = null;
+        public ProjectModel? Project { get; private set; } = null;
 
         /// <summary>
         /// Adds this task to a project.
         /// </summary>
         /// <param name="projectId">A project to which the task will be attached</param>
-        /// <exception cref="NullReferenceException">Throws if passed <paramref name="projectId"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Throws if the passed <paramref name="projectId"/> is null.</exception>
         public void AttachToProject(Guid? projectId)
         {
             if (projectId is null)
-                throw new NullReferenceException("The parameter {projectId} cannot be null.");
+                throw new ArgumentNullException(nameof(projectId));
             else
                 ProjectId = projectId;
         }
