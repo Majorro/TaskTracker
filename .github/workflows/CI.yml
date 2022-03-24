@@ -2,8 +2,15 @@
 
 on:
   push:
-  #pull_request:
-  #  branches: [ master ]
+    branches:
+      - '*'
+    paths:
+      - '.github/workflows/CI.yml'
+      - 'src/**'
+      - 'tests/**'
+  pull_request:
+    branches: [ master ]
+    types: [ opened, reopened, edited ]
 
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -94,7 +101,7 @@ jobs:
 
       - name: Mayhem for API
         uses: ForAllSecure/mapi-action@193b709971cc377675e33284aecbf9229853e010
-        continue-on-error: true
+        continue-on-error: false
         with:
           mapi-token: ${{ secrets.MAPI_TOKEN }}
           api-url: http://localhost:8080

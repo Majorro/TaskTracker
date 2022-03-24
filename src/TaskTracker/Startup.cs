@@ -13,6 +13,8 @@ using TaskTracker.Data;
 using System.Collections.Generic;
 using System.Collections;
 using Microsoft.AspNetCore.Rewrite;
+using System.Net.Http;
+using System.Text;
 
 namespace TaskTracker
 {
@@ -54,7 +56,7 @@ namespace TaskTracker
                         string xmldocPath = Path.Combine(AppContext.BaseDirectory, "TaskTracker.xml");
                         options.IncludeXmlComments(xmldocPath, true);
                     })
-                    .AddDbContext<TaskTrackerContext>(options => options.UseSqlServer(GetConnectionString()))
+                    .AddDbContext<TaskTrackerContext>(options => options.UseNpgsql(GetConnectionString()))
                     .AddControllers()
                     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
@@ -66,7 +68,7 @@ namespace TaskTracker
         /// <param name="webHostEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment)
         {
-            var option = new RewriteOptions();
+            RewriteOptions option = new();
             option.AddRedirect("^$", "swagger");
 
             if (webHostEnvironment.IsDevelopment())
@@ -82,6 +84,22 @@ namespace TaskTracker
                               })
                               .UseRouting()
                               .UseAuthorization()
+                              .Use(async (context, next) =>
+                              {
+                                  Stream bodyStream = context.Request.Body;
+
+                                  using StreamReader reader = new(bodyStream);
+                                  string body = await reader.ReadToEndAsync();
+
+                                  // remove the NULL unicode symbols, because they're not allowed in postgres
+                                  body = body.Replace("\0", "")
+                                             .Replace("\\u0000", "");
+
+                                  StringContent bodyContent = new(body, Encoding.UTF8, "application/json");
+                                  context.Request.Body = await bodyContent.ReadAsStreamAsync();
+
+                                  await next.Invoke();
+                              })
                               .UseEndpoints(endpoints => { endpoints.MapControllers(); })
                               .UseRewriter(option);
         }
@@ -89,10 +107,17 @@ namespace TaskTracker
         private string GetConnectionString() =>
             WebHostEnvironment.IsDevelopment() ?
             Configuration["ConnectionStrings:TaskTrackerDb"] :
-            string.Format(Configuration["ConnectionStrings:TaskTrackerDb"],
-                          Environment.GetEnvironmentVariable("DB_HOSTNAME"),
-                          Environment.GetEnvironmentVariable("DB_HOSTPORT"),
-                          Environment.GetEnvironmentVariable("DB_LOGIN"),
-                          Environment.GetEnvironmentVariable("DB_PASSWORD"));
+            ParsePostgresConnectionString(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING"));
+
+        private string ParsePostgresConnectionString(string connectionString)
+        {
+            Uri databaseUri = new(connectionString);
+
+            string db = databaseUri.LocalPath.TrimStart('/');
+            string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+            return string.Format(Configuration["ConnectionStrings:TaskTrackerDb"],
+                                 userInfo[0], userInfo[1], databaseUri.Host, databaseUri.Port, db);
+        }
     }
 }

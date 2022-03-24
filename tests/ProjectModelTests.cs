@@ -14,7 +14,7 @@ namespace TaskTrackerTests
     [TestFixture]
     public class ProjectModelTests
     {
-        private ProjectModel _project;
+        private ProjectModel? _project;
 
         [SetUp]
         public void Setup()
@@ -27,7 +27,7 @@ namespace TaskTrackerTests
         {
             TaskModel task = new() { Id = Guid.NewGuid() };
 
-            _project.AddTask(task);
+            _project!.AddTask(task);
 
             Assert.IsTrue(task.IsInProject(_project.Id));
         }
@@ -35,9 +35,9 @@ namespace TaskTrackerTests
         [Test, Order(0)]
         public void TestAddTaskPassedNull()
         {
-            TaskModel task = null;
+            TaskModel? task = null;
 
-            Assert.Throws<NullReferenceException>(() => _project.AddTask(task));
+            Assert.Throws<ArgumentNullException>(() => _project!.AddTask(task));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TaskTrackerTests
         {
             TaskModel task = new() { Id = Guid.NewGuid() };
 
-            _project.AddTask(task);
+            _project!.AddTask(task);
 
             Assert.IsTrue(_project.RemoveTask(task));
             Assert.IsFalse(task.IsInProject());
@@ -57,9 +57,9 @@ namespace TaskTrackerTests
         [Test, Order(0)]
         public void TestRemoveTaskPassedNull()
         {
-            TaskModel task = null;
+            TaskModel? task = null;
 
-            Assert.Throws<NullReferenceException>(() => _project.RemoveTask(task));
+            Assert.Throws<ArgumentNullException>(() => _project!.RemoveTask(task));
         }
     }
 }
