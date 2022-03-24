@@ -66,7 +66,7 @@ namespace TaskTracker
         /// <param name="webHostEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment)
         {
-            var option = new RewriteOptions();
+            RewriteOptions option = new();
             option.AddRedirect("^$", "swagger");
 
             if (webHostEnvironment.IsDevelopment())
@@ -93,7 +93,7 @@ namespace TaskTracker
 
         private string ParsePostgresConnectionString(string connectionString)
         {
-            var databaseUri = new Uri(connectionString);
+            Uri databaseUri = new(connectionString);
 
             string db = databaseUri.LocalPath.TrimStart('/');
             string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);

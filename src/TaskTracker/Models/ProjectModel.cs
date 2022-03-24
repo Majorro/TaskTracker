@@ -16,7 +16,7 @@ namespace TaskTracker.Models
         public Priority Priority { get; init; } = Priority.Low;
 
         [JsonIgnore]
-        public IEnumerable<TaskModel> Tasks { get; init; } = Enumerable.Empty<TaskModel>();
+        public ICollection<TaskModel> Tasks { get; init; } = new List<TaskModel>();
 
         /// <summary>
         /// Adds a task to this project.
