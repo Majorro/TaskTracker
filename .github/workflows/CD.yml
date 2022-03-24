@@ -1,6 +1,5 @@
 name: TaskTracker CD
 
-
 on:
   push:
     tags:
@@ -15,6 +14,7 @@ env:
 jobs:
 
   deploy:
+    if: github.event.base_ref == 'refs/heads/master'  # TODO: test it
     name: Deploy to Heroku
     runs-on: ubuntu-latest
     steps:
