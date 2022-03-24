@@ -26,7 +26,9 @@ jobs:
       run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
 
     - name: Build and push
-      run: heroku container:push web -a $APP_NAME --arg POSTGRES_CONNECTION_STRING="$POSTGRES_CONNECTION_STRING"
+      run: |
+        cd src/TaskTracker
+        heroku container:push web -a $APP_NAME --arg POSTGRES_CONNECTION_STRING="$POSTGRES_CONNECTION_STRING"
 
     - name: Deploy
       run: heroku container:release web -a $APP_NAME
