@@ -22,6 +22,7 @@ namespace TaskTracker
         public static void Main(string[] args)
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())

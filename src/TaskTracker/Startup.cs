@@ -13,6 +13,8 @@ using TaskTracker.Data;
 using System.Collections.Generic;
 using System.Collections;
 using Microsoft.AspNetCore.Rewrite;
+using System.Net.Http;
+using System.Text;
 
 namespace TaskTracker
 {
@@ -82,6 +84,22 @@ namespace TaskTracker
                               })
                               .UseRouting()
                               .UseAuthorization()
+                              .Use(async (context, next) =>
+                              {
+                                  Stream bodyStream = context.Request.Body;
+
+                                  using StreamReader reader = new(bodyStream);
+                                  string body = await reader.ReadToEndAsync();
+
+                                  // remove the NULL unicode symbols, because they're not allowed in postgres
+                                  body = body.Replace("\0", "")
+                                             .Replace("\\u0000", "");
+
+                                  StringContent bodyContent = new(body, Encoding.UTF8, "application/json");
+                                  context.Request.Body = await bodyContent.ReadAsStreamAsync();
+
+                                  await next.Invoke();
+                              })
                               .UseEndpoints(endpoints => { endpoints.MapControllers(); })
                               .UseRewriter(option);
         }
